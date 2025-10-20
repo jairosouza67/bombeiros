@@ -162,45 +162,6 @@ export default function Index() {
             </Button>
           </div>
         </section>
-
-        {/* Footer */}
-        <footer className="border-t-2 border-primary py-8 bg-card">
-          <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-              <div>
-                <h4 className="font-bold text-lg mb-4 text-primary">Bombeiro Bilíngue</h4>
-                <p className="text-muted-foreground">Treinamento profissional de inglês para bombeiros.</p>
-              </div>
-              <div>
-                <h5 className="font-semibold mb-4 text-foreground">Produto</h5>
-                <ul className="space-y-2 text-muted-foreground">
-                  <li><a href="#" className="hover:text-primary transition-colors">Aulas</a></li>
-                  <li><a href="#" className="hover:text-primary transition-colors">Meditação</a></li>
-                  <li><a href="#" className="hover:text-primary transition-colors">Música</a></li>
-                </ul>
-              </div>
-              <div>
-                <h5 className="font-semibold mb-4 text-foreground">Empresa</h5>
-                <ul className="space-y-2 text-muted-foreground">
-                  <li><a href="#" className="hover:text-primary transition-colors">Sobre</a></li>
-                  <li><a href="#" className="hover:text-primary transition-colors">Blog</a></li>
-                  <li><a href="#" className="hover:text-primary transition-colors">Contato</a></li>
-                </ul>
-              </div>
-              <div>
-                <h5 className="font-semibold mb-4 text-foreground">Legal</h5>
-                <ul className="space-y-2 text-muted-foreground">
-                  <li><a href="#" className="hover:text-primary transition-colors">Privacidade</a></li>
-                  <li><a href="#" className="hover:text-primary transition-colors">Termos</a></li>
-                  <li><a href="#" className="hover:text-primary transition-colors">Cookies</a></li>
-                </ul>
-              </div>
-            </div>
-            <div className="border-t border-border pt-8 text-center text-muted-foreground">
-              <p>&copy; {new Date().getFullYear()} Bombeiro Bilíngue. Todos os direitos reservados.</p>
-            </div>
-          </div>
-        </footer>
       </main>
     </div>
   );
