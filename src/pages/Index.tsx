@@ -86,26 +86,6 @@ export default function Index() {
           </div>
         </section>
 
-        {/* Stats Section */}
-        <section className="py-12 md:py-16 bg-card border-b border-primary/20">
-          <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="text-center space-y-2">
-                <p className="text-4xl md:text-5xl font-bold text-primary">500+</p>
-                <p className="text-muted-foreground text-lg">Bombeiros Treinados</p>
-              </div>
-              <div className="text-center space-y-2">
-                <p className="text-4xl md:text-5xl font-bold text-accent">95%</p>
-                <p className="text-muted-foreground text-lg">Taxa de Sucesso</p>
-              </div>
-              <div className="text-center space-y-2">
-                <p className="text-4xl md:text-5xl font-bold text-primary">24/7</p>
-                <p className="text-muted-foreground text-lg">Suporte Disponível</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
         {/* Features Section */}
         <section className="py-16 md:py-24 bg-background">
           <div className="container mx-auto px-4">
@@ -225,4 +205,3 @@ export default function Index() {
     </div>
   );
 }
-
