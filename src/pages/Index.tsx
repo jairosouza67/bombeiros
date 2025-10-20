@@ -163,6 +163,15 @@ export default function Index() {
           </div>
         </section>
       </main>
+
+      {/* Footer */}
+      <footer className="border-t-2 border-primary py-8 bg-card">
+        <div className="container mx-auto px-4 text-center">
+          <p className="text-muted-foreground">
+            &copy; {new Date().getFullYear()} Bombeiro Bilíngue. Todos os direitos reservados.
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }
