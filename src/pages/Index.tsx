@@ -65,7 +65,7 @@ export default function Index() {
                 O treinamento essencial para bombeiros que precisam de fluência em inglês em situações de emergência e missões internacionais.
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
+              <div className="flex justify-center pt-6">
                 <Button 
                   size="lg" 
                   onClick={handleCtaClick} 
@@ -73,13 +73,6 @@ export default function Index() {
                   className="bg-white text-primary hover:bg-white/90 font-bold text-lg px-8 py-6 shadow-xl hover:shadow-2xl transition-all"
                 >
                   {loading ? 'Preparando...' : 'Começar o Treinamento'}
-                </Button>
-                <Button 
-                  size="lg" 
-                  variant="outline"
-                  className="border-2 border-white text-white hover:bg-white/10 font-bold text-lg px-8 py-6"
-                >
-                  Saiba Mais
                 </Button>
               </div>
             </div>
