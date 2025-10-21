@@ -43,6 +43,7 @@ export default function Dashboard() {
     enabled: !!user
   });
 
+  // --- Data Fetching for Lessons Progress ---
   const { data: progress } = useQuery({
     queryKey: ['progress', user?.id],
     queryFn: async () => {
@@ -70,6 +71,33 @@ export default function Dashboard() {
     }
   });
 
+  // --- Data Fetching for Music Progress ---
+  const { data: musicProgress } = useQuery({
+    queryKey: ['music_progress', user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('music_progress')
+        .select('*')
+        .eq('user_id', user?.id);
+      
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user
+  });
+
+  const { data: mindfulMusic } = useQuery({
+    queryKey: ['mindful_music'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('mindful_music')
+        .select('*');
+      
+      if (error) throw error;
+      return data;
+    }
+  });
+
   if (loading || !user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -81,6 +109,11 @@ export default function Dashboard() {
   const completedLessons = progress?.filter(p => p.is_completed).length || 0;
   const totalLessons = lessons?.length || 0;
   const progressPercentage = totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
+
+  const completedMusic = musicProgress?.filter(p => p.is_completed).length || 0;
+  const totalMusic = mindfulMusic?.length || 0;
+  const musicProgressPercentage = totalMusic > 0 ? (completedMusic / totalMusic) * 100 : 0;
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 pb-20 md:pb-0">
@@ -189,30 +222,26 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          {/* Card 3: Conquistas (FIXED: Added CardDescription) */}
+          {/* Card 3: Músicas (Substituindo Conquistas) */}
           <Card className="hover:shadow-lg transition-shadow">
             <CardHeader>
               <div className="flex items-center gap-2">
-                <Trophy className="h-5 w-5 text-accent" />
-                <CardTitle>Conquistas</CardTitle>
+                <Music2 className="h-5 w-5 text-primary" />
+                <CardTitle>Músicas</CardTitle>
               </div>
-              <CardDescription>Suas medalhas e badges</CardDescription> {/* FIX APPLIED HERE */}
+              <CardDescription>Sons para foco e relaxamento</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="flex flex-wrap gap-2">
-                  {profile?.achievements && profile.achievements.length > 0 ? (
-                    profile.achievements.map((achievement: string, index: number) => (
-                      <div key={index} className="bg-accent/10 text-accent px-3 py-1 rounded-full text-sm">
-                        {achievement}
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-sm text-muted-foreground">Nenhuma conquista ainda</p>
-                  )}
+                <div>
+                  <div className="flex justify-between text-sm mb-2">
+                    <span>Progresso</span>
+                    <span>{completedMusic}/{totalMusic}</span>
+                  </div>
+                  <Progress value={musicProgressPercentage} className="h-2 bg-primary/20" indicatorClassName="bg-primary" />
                 </div>
-                <Button variant="outline" className="w-full" onClick={() => navigate('/profile')}>
-                  Ver Todas
+                <Button variant="outline" className="w-full" onClick={() => navigate('/music')}>
+                  Ouvir Músicas
                 </Button>
               </div>
             </CardContent>
