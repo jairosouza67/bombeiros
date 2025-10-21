@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ArrowLeft, CheckCircle, Video, Loader2, Wind } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { PictureInPictureButton } from '@/components/PictureInPictureButton';
 
 type Lesson = Tables<'lessons'>;
 type Progress = Tables<'progress'>;
@@ -20,7 +21,7 @@ const getEmbedUrl = (url: string) => {
   // Basic YouTube conversion
   const youtubeMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&?]+)/);
   if (youtubeMatch && youtubeMatch[1]) {
-    return `https://www.youtube.com/embed/${youtubeMatch[1]}?rel=0`;
+    return `https://www.youtube.com/embed/${youtubeMatch[1]}?rel=0&enablejsapi=1`;
   }
 
   // Add more services (Vimeo, etc.) if needed later
@@ -33,6 +34,7 @@ export default function LessonDetail() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const videoRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -165,15 +167,19 @@ export default function LessonDetail() {
         {/* Video Player Card */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Video className="h-5 w-5 text-primary" />
-              Vídeo Principal
-            </CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2">
+                <Video className="h-5 w-5 text-primary" />
+                Vídeo Principal
+              </CardTitle>
+              <PictureInPictureButton videoElement={null} />
+            </div>
           </CardHeader>
           <CardContent>
             {embedUrl ? (
               <div className="relative w-full pt-[56.25%] bg-black rounded-lg overflow-hidden">
                 <iframe
+                  ref={videoRef}
                   className="absolute top-0 left-0 w-full h-full"
                   src={embedUrl}
                   title={lesson.title}
