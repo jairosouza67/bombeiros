@@ -222,14 +222,14 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          {/* Card 3: Músicas (Substituindo Conquistas) */}
+          {/* Card 3: Músicas */}
           <Card className="hover:shadow-lg transition-shadow">
             <CardHeader>
               <div className="flex items-center gap-2">
                 <Music2 className="h-5 w-5 text-primary" />
                 <CardTitle>Músicas</CardTitle>
               </div>
-              <CardDescription>Sons para foco e relaxamento</CardDescription>
+              <CardDescription>Sons para fixar o conhecimento</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
