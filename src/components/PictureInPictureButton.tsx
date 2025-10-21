@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Pip, PipOff } from 'lucide-react';
+import { Monitor, Minimize2 } from 'lucide-react';
 
 interface PictureInPictureButtonProps {
   videoElement: HTMLVideoElement | null;
@@ -68,9 +68,9 @@ export const PictureInPictureButton: React.FC<PictureInPictureButtonProps> = ({
       aria-label={isPiPActive ? "Sair do modo Picture-in-Picture" : "Ativar Picture-in-Picture"}
     >
       {isPiPActive ? (
-        <PipOff className="h-5 w-5" />
+        <Minimize2 className="h-5 w-5" />
       ) : (
-        <Pip className="h-5 w-5" />
+        <Monitor className="h-5 w-5" />
       )}
       <span className="sr-only">
         {isPiPActive ? "Sair do modo Picture-in-Picture" : "Ativar Picture-in-Picture"}
