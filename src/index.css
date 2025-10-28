@@ -1,0 +1,180 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Firefighter-Inspired Design System
+   Deep red primary, gold accents, dark navy backgrounds, white text
+   All colors in HSL format for consistency
+*/
+
+@layer base {
+  :root {
+    /* Background - Deep Navy (Professional & Bold) */
+    --background: 220 15% 12%;
+    --foreground: 0 0% 98%;
+
+    /* Card - Dark Navy with Red Tint */
+    --card: 220 20% 18%;
+    --card-foreground: 0 0% 98%;
+
+    /* Popover - Slightly Lighter Navy */
+    --popover: 220 18% 22%;
+    --popover-foreground: 0 0% 98%;
+
+    /* Primary - Vibrant Fire Red (High Contrast) */
+    --primary: 0 100% 50%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 0 100% 60%;
+
+    /* Secondary - Dark Crimson (Deep & Professional) */
+    --secondary: 0 85% 25%;
+    --secondary-foreground: 0 0% 100%;
+
+    /* Accent - Gold/Amber (Firefighter Badge Color) */
+    --accent: 42 100% 50%;
+    --accent-foreground: 0 0% 10%;
+
+    /* Muted - Subtle Gray for Secondary Text */
+    --muted: 220 10% 40%;
+    --muted-foreground: 0 0% 85%;
+
+    /* Destructive - Alert Red */
+    --destructive: 0 95% 48%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Border - Subtle Red Tint */
+    --border: 0 70% 35%;
+    --input: 220 20% 20%;
+    --ring: 42 100% 50%;
+
+    --radius: 0.75rem;
+
+    /* Gradients - Professional Firefighter Theme */
+    --gradient-primary: linear-gradient(135deg, hsl(0 100% 50%), hsl(15 95% 45%));
+    --gradient-dark: linear-gradient(180deg, hsl(220 15% 12%), hsl(220 20% 8%));
+    --gradient-hero: linear-gradient(135deg, hsl(0 100% 48%) 0%, hsl(10 95% 50%) 50%, hsl(42 100% 50%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(42 100% 45%), hsl(35 100% 55%));
+    
+    /* Shadows - Bold & Professional */
+    --shadow-glow: 0 0 50px hsl(0 100% 50% / 0.3);
+    --shadow-card: 0 8px 32px hsl(0 0% 0% / 0.4);
+    --shadow-intense: 0 12px 48px hsl(0 100% 50% / 0.25);
+    --shadow-subtle: 0 4px 16px hsl(0 0% 0% / 0.2);
+
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .dark {
+    --background: 220 15% 10%;
+    --foreground: 0 0% 99%;
+
+    --card: 220 22% 16%;
+    --card-foreground: 0 0% 99%;
+
+    --popover: 220 20% 20%;
+    --popover-foreground: 0 0% 99%;
+
+    --primary: 0 100% 52%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 0 100% 65%;
+
+    --secondary: 0 85% 28%;
+    --secondary-foreground: 0 0% 100%;
+
+    --accent: 42 100% 52%;
+    --accent-foreground: 0 0% 10%;
+
+    --muted: 220 12% 45%;
+    --muted-foreground: 0 0% 88%;
+
+    --destructive: 0 95% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 75% 38%;
+    --input: 220 22% 18%;
+    --ring: 42 100% 52%;
+
+    --shadow-glow: 0 0 60px hsl(0 100% 52% / 0.4);
+    --shadow-card: 0 8px 40px hsl(0 0% 0% / 0.5);
+    --shadow-intense: 0 12px 56px hsl(0 100% 52% / 0.3);
+    --shadow-subtle: 0 4px 20px hsl(0 0% 0% / 0.3);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* Enhanced Typography */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold tracking-tight;
+  }
+
+  h1 {
+    @apply text-4xl md:text-5xl;
+  }
+
+  h2 {
+    @apply text-3xl md:text-4xl;
+  }
+
+  h3 {
+    @apply text-2xl md:text-3xl;
+  }
+
+  /* Button Enhancements */
+  button {
+    @apply transition-all duration-300;
+  }
+
+  /* Link Enhancements */
+  a {
+    @apply text-primary hover:text-primary-glow transition-colors;
+  }
+}
+
+/* Custom Component Styles */
+@layer components {
+  .btn-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary-glow shadow-md hover:shadow-lg transition-all duration-300;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/90 shadow-md hover:shadow-lg transition-all duration-300;
+  }
+
+  .btn-accent {
+    @apply bg-accent text-accent-foreground hover:bg-accent/90 shadow-md hover:shadow-lg transition-all duration-300;
+  }
+
+  .card-elevated {
+    @apply bg-card rounded-lg shadow-card hover:shadow-intense transition-all duration-300;
+  }
+
+  .badge-fire {
+    @apply bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-semibold;
+  }
+
+  .badge-gold {
+    @apply bg-accent text-accent-foreground px-3 py-1 rounded-full text-sm font-semibold;
+  }
+
+  .gradient-fire {
+    @apply bg-gradient-to-r from-primary via-primary to-primary-glow;
+  }
+
+  .gradient-gold {
+    @apply bg-gradient-to-r from-accent via-accent to-accent/80;
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
+  }
+}
+
