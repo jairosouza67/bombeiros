@@ -36,7 +36,11 @@ export function FixedNavBar() {
                   isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
                 )}
               >
-                <Icon className="h-5 w-5 mb-0.5" />
+                {typeof Icon === 'string' ? (
+                  <span className="mb-0.5 text-lg leading-none">{Icon}</span>
+                ) : (
+                  <Icon className="h-5 w-5 mb-0.5" />
+                )}
                 <span>{item.name}</span>
               </div>
             </Link>

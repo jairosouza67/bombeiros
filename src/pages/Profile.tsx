@@ -128,7 +128,11 @@ export default function Profile() {
                     className={cn(isActive ? "text-primary" : "text-muted-foreground")}
                   >
                     <Link to={item.path}>
-                      <Icon className="h-4 w-4 mr-2" />
+                      {typeof Icon === 'string' ? (
+                        <span className="h-4 w-4 mr-2 text-base">{Icon}</span>
+                      ) : (
+                        <Icon className="h-4 w-4 mr-2" />
+                      )}
                       {item.name}
                     </Link>
                   </Button>

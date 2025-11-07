@@ -6,7 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Flame, User, LogOut, PlusCircle, BookOpen, Wind, Music2, GraduationCap } from 'lucide-react';
+import { Flame, User, LogOut, PlusCircle, Wind, Music2, GraduationCap } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { navItems } from '@/lib/navItems';
 
@@ -167,7 +167,11 @@ export default function Dashboard() {
                     className={cn(isActive ? "text-primary" : "text-muted-foreground")}
                   >
                     <Link to={item.path}>
-                      <Icon className="h-4 w-4 mr-2" />
+                      {typeof Icon === 'string' ? (
+                        <span className="h-4 w-4 mr-2 text-base">{Icon}</span>
+                      ) : (
+                        <Icon className="h-4 w-4 mr-2" />
+                      )}
                       {item.name}
                     </Link>
                   </Button>
@@ -233,7 +237,7 @@ export default function Dashboard() {
           <Card className="hover:shadow-lg transition-shadow">
             <CardHeader>
               <div className="flex items-center gap-2">
-                <BookOpen className="h-5 w-5 text-primary" />
+                <span className="h-5 w-5 text-primary text-lg">🍵</span>
                 <CardTitle>Daily Contact</CardTitle>
               </div>
               <CardDescription>Continue seus Daily Contacts</CardDescription>
