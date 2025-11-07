@@ -178,3 +178,71 @@
   }
 }
 
+/* Orientation Responsiveness */
+@layer utilities {
+  /* Portrait orientation adjustments */
+  @media screen and (orientation: portrait) {
+    .orientation-portrait {
+      /* Ajustes específicos para portrait */
+    }
+  }
+
+  /* Landscape orientation adjustments */
+  @media screen and (orientation: landscape) {
+    .orientation-landscape {
+      /* Ajustes específicos para landscape */
+    }
+
+    /* Ajustar navbar para landscape */
+    .orientation-landscape .fixed-navbar {
+      height: 48px;
+      padding: 0.5rem;
+    }
+
+    .orientation-landscape .fixed-navbar .nav-item {
+      flex-direction: row;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .orientation-landscape .fixed-navbar .nav-item span {
+      font-size: 0.75rem;
+    }
+
+    /* Ajustar layout de detalhes para landscape */
+    .orientation-landscape .detail-layout {
+      flex-direction: row;
+      gap: 2rem;
+    }
+
+    .orientation-landscape .detail-main {
+      flex: 2;
+    }
+
+    .orientation-landscape .detail-sidebar {
+      flex: 1;
+      max-width: 300px;
+    }
+
+    /* Ajustar vídeos para landscape */
+    .orientation-landscape .video-container {
+      aspect-ratio: 16/9;
+      max-height: 60vh;
+    }
+
+    /* Ajustar cards para melhor aproveitamento do espaço */
+    .orientation-landscape .card-grid {
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+
+    /* Ajustar headers para landscape */
+    .orientation-landscape .page-header {
+      padding: 1rem 2rem;
+    }
+
+    .orientation-landscape .page-title {
+      font-size: 2rem;
+    }
+  }
+}
+

@@ -11,6 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { PictureInPictureButton } from '@/components/PictureInPictureButton';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useOrientation } from '@/hooks/useOrientation';
 
 type MindfulFlow = Tables<'mindful_flows'>;
 type MindfulProgress = Tables<'mindful_progress'>;
@@ -33,6 +34,7 @@ export default function MindfulFlowDetail() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const videoRef = useRef<HTMLIFrameElement>(null);
+  const orientation = useOrientation();
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -121,8 +123,11 @@ export default function MindfulFlowDetail() {
   const embedUrl = getEmbedUrl(flow.video_url);
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
+    <div className={cn(
+      "min-h-screen bg-background",
+      orientation === 'landscape' ? 'orientation-landscape' : 'orientation-portrait'
+    )}>
+      <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10 page-header">
         <div className="container mx-auto px-4 py-4">
           <Button variant="ghost" onClick={() => navigate('/mindful')}>
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -132,10 +137,16 @@ export default function MindfulFlowDetail() {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        <div className="flex flex-col lg:flex-row gap-8">
-          <div className="w-full lg:w-2/3 space-y-8">
+        <div className={cn(
+          "flex flex-col lg:flex-row gap-8 detail-layout",
+          orientation === 'landscape' ? 'lg:flex-row' : ''
+        )}>
+          <div className={cn(
+            "w-full lg:w-2/3 space-y-8 detail-main",
+            orientation === 'landscape' ? 'lg:w-2/3' : ''
+          )}>
             <div className="space-y-2">
-              <h1 className="text-4xl font-extrabold text-primary">{flow.title}</h1>
+              <h1 className="text-4xl font-extrabold text-primary page-title">{flow.title}</h1>
               <p className="text-lg text-muted-foreground">Duração: {flow.duration} min</p>
             </div>
 
@@ -148,7 +159,7 @@ export default function MindfulFlowDetail() {
               </CardHeader>
               <CardContent>
                 {embedUrl ? (
-                  <div className="relative w-full pt-[56.25%] bg-black rounded-lg overflow-hidden">
+                  <div className="relative w-full pt-[56.25%] bg-black rounded-lg overflow-hidden video-container">
                     <iframe ref={videoRef} className="absolute top-0 left-0 w-full h-full" src={embedUrl} title={flow.title} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen frameBorder="0"></iframe>
                   </div>
                 ) : (
@@ -197,7 +208,10 @@ export default function MindfulFlowDetail() {
             </Card>
           </div>
 
-          <div className="w-full lg:w-1/3">
+          <div className={cn(
+            "w-full lg:w-1/3 detail-sidebar",
+            orientation === 'landscape' ? 'lg:w-1/3' : ''
+          )}>
             <Card className="sticky top-24">
               <CardHeader><CardTitle>Sessões de Flow</CardTitle></CardHeader>
               <CardContent>
