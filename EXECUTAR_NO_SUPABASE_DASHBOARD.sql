@@ -59,14 +59,29 @@ ALTER TABLE public.aulas_progress ENABLE ROW LEVEL SECURITY;
 
 -- Drop existing policies if they exist
 DROP POLICY IF EXISTS "Anyone can view aulas" ON public.aulas;
+DROP POLICY IF EXISTS "Authenticated users can insert aulas" ON public.aulas;
+DROP POLICY IF EXISTS "Authenticated users can update aulas" ON public.aulas;
+DROP POLICY IF EXISTS "Authenticated users can delete aulas" ON public.aulas;
 DROP POLICY IF EXISTS "Users can view own aulas progress" ON public.aulas_progress;
 DROP POLICY IF EXISTS "Users can insert own aulas progress" ON public.aulas_progress;
 DROP POLICY IF EXISTS "Users can update own aulas progress" ON public.aulas_progress;
 
--- RLS Policies for aulas (public read)
+-- RLS Policies for aulas
 CREATE POLICY "Anyone can view aulas"
   ON public.aulas FOR SELECT
   USING (true);
+
+CREATE POLICY "Authenticated users can insert aulas"
+  ON public.aulas FOR INSERT
+  WITH CHECK (auth.role() = 'authenticated');
+
+CREATE POLICY "Authenticated users can update aulas"
+  ON public.aulas FOR UPDATE
+  USING (auth.role() = 'authenticated');
+
+CREATE POLICY "Authenticated users can delete aulas"
+  ON public.aulas FOR DELETE
+  USING (auth.role() = 'authenticated');
 
 -- RLS Policies for aulas_progress
 CREATE POLICY "Users can view own aulas progress"
