@@ -37,7 +37,7 @@ export default function Dashboard() {
   });
 
   // --- Data Fetching for Lessons Progress ---
-  const { data: progress } = useQuery({
+  const { data: progress, isLoading: progressLoading } = useQuery({
     queryKey: ['progress', user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -51,7 +51,7 @@ export default function Dashboard() {
     enabled: !!user
   });
 
-  const { data: lessons } = useQuery({
+  const { data: lessons, isLoading: lessonsLoading } = useQuery({
     queryKey: ['lessons'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -65,7 +65,7 @@ export default function Dashboard() {
   });
 
   // --- Data Fetching for Aulas Progress ---
-  const { data: aulasProgress } = useQuery({
+  const { data: aulasProgress, isLoading: aulasProgressLoading } = useQuery({
     queryKey: ['aulas_progress', user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -79,7 +79,7 @@ export default function Dashboard() {
     enabled: !!user
   });
 
-  const { data: aulas } = useQuery({
+  const { data: aulas, isLoading: aulasLoading } = useQuery({
     queryKey: ['aulas'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -93,7 +93,7 @@ export default function Dashboard() {
   });
 
   // --- Data Fetching for Music Progress ---
-  const { data: musicProgress } = useQuery({
+  const { data: musicProgress, isLoading: musicProgressLoading } = useQuery({
     queryKey: ['music_progress', user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -107,7 +107,7 @@ export default function Dashboard() {
     enabled: !!user
   });
 
-  const { data: mindfulMusic } = useQuery({
+  const { data: mindfulMusic, isLoading: musicLoading } = useQuery({
     queryKey: ['mindful_music'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -216,7 +216,9 @@ export default function Dashboard() {
                 <div>
                   <div className="flex justify-between text-sm mb-2">
                     <span>Progresso</span>
-                    <span>{completedAulas}/{totalAulas}</span>
+                    <span>
+                      {aulasLoading || aulasProgressLoading ? '...' : `${completedAulas}/${totalAulas}`}
+                    </span>
                   </div>
                   <Progress value={aulasProgressPercentage} className="h-2" />
                 </div>
@@ -241,7 +243,9 @@ export default function Dashboard() {
                 <div>
                   <div className="flex justify-between text-sm mb-2">
                     <span>Progresso</span>
-                    <span>{completedLessons}/{totalLessons}</span>
+                    <span>
+                      {lessonsLoading || progressLoading ? '...' : `${completedLessons}/${totalLessons}`}
+                    </span>
                   </div>
                   <Progress value={progressPercentage} className="h-2" />
                 </div>
@@ -287,7 +291,9 @@ export default function Dashboard() {
                 <div>
                   <div className="flex justify-between text-sm mb-2">
                     <span>Progresso</span>
-                    <span>{completedMusic}/{totalMusic}</span>
+                    <span>
+                      {musicLoading || musicProgressLoading ? '...' : `${completedMusic}/${totalMusic}`}
+                    </span>
                   </div>
                   <Progress value={musicProgressPercentage} className="h-2" />
                 </div>
