@@ -98,11 +98,33 @@ export default function MusicEditor() {
       const fileName = `${Date.now()}.${fileExt}`;
       const filePath = `music/${type}/${fileName}`;
 
-      const { data, error } = await supabase.storage
+      // Try to upload first
+      let uploadResult = await supabase.storage
         .from('content')
         .upload(filePath, file);
 
-      if (error) throw error;
+      // If bucket doesn't exist, create it and try again
+      if (uploadResult.error && uploadResult.error.message.includes('Bucket not found')) {
+        // Create the bucket
+        const { error: createBucketError } = await supabase.storage.createBucket('content', {
+          public: true,
+          allowedMimeTypes: type === 'pdf' ? ['application/pdf'] : ['image/*'],
+          fileSizeLimit: 10485760, // 10MB
+        });
+
+        if (createBucketError) {
+          throw new Error(`Falha ao criar bucket: ${createBucketError.message}`);
+        }
+
+        // Try upload again
+        uploadResult = await supabase.storage
+          .from('content')
+          .upload(filePath, file);
+
+        if (uploadResult.error) throw uploadResult.error;
+      } else if (uploadResult.error) {
+        throw uploadResult.error;
+      }
 
       const { data: { publicUrl } } = supabase.storage
         .from('content')
@@ -117,10 +139,11 @@ export default function MusicEditor() {
         title: "Upload realizado!",
         description: `${type === 'pdf' ? 'PDF' : 'Imagem'} enviado com sucesso.`,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Erro desconhecido';
       toast({
         title: "Erro no upload",
-        description: error.message,
+        description: message,
         variant: "destructive",
       });
     } finally {

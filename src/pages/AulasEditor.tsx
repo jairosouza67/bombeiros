@@ -11,30 +11,34 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/components/ui/use-toast';
 import { ArrowLeft, Save, Trash2, Video, FileText, Image } from 'lucide-react';
 
-interface MindfulFlow {
+interface Aula {
   id: string;
   title: string;
+  module: string;
   description: string;
+  video_url: string;
+  mindful_video_url: string;
   duration: number;
   release_timestamp: string;
-  video_url: string;
   pdf_url?: string;
   image_url?: string;
 }
 
-export default function MindfulFlowEditor() {
+export default function AulasEditor() {
   const { user, loading, isKeyUser } = useAuth();
   const navigate = useNavigate();
-  const { flowId } = useParams<{ flowId: string }>();
+  const { aulaId } = useParams<{ aulaId: string }>();
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const [flowData, setFlowData] = useState<Partial<MindfulFlow>>({
+  const [aulaData, setAulaData] = useState<Partial<Aula>>({
     title: '',
+    module: '',
     description: '',
+    video_url: '',
+    mindful_video_url: '',
     duration: 10,
     release_timestamp: new Date().toISOString().slice(0, 16),
-    video_url: '',
     pdf_url: '',
     image_url: '',
   });
@@ -44,38 +48,38 @@ export default function MindfulFlowEditor() {
 
   useEffect(() => {
     if (!loading && (!user || !isKeyUser)) {
-      navigate('/mindful');
+      navigate('/aulas');
     }
   }, [user, loading, isKeyUser, navigate]);
 
-  // Fetch existing flow data if editing
-  const { data: existingFlow, isLoading: isFlowLoading } = useQuery<MindfulFlow>({
-    queryKey: ['mindful_flow', flowId],
+  // Fetch existing aula data if editing
+  const { data: existingAula, isLoading: isAulaLoading } = useQuery<Aula>({
+    queryKey: ['aula', aulaId],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('mindful_flows')
+        .from('aulas')
         .select('*')
-        .eq('id', flowId)
+        .eq('id', aulaId)
         .single();
-      
+
       if (error) throw error;
       return data;
     },
-    enabled: !!flowId,
+    enabled: !!aulaId,
   });
 
   useEffect(() => {
-    if (existingFlow) {
-      setFlowData({
-        ...existingFlow,
-        release_timestamp: new Date(existingFlow.release_timestamp).toISOString().slice(0, 16),
+    if (existingAula) {
+      setAulaData({
+        ...existingAula,
+        release_timestamp: new Date(existingAula.release_timestamp).toISOString().slice(0, 16),
       });
     }
-  }, [existingFlow]);
+  }, [existingAula]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target;
-    setFlowData(prev => ({
+    setAulaData(prev => ({
       ...prev,
       [id]: id === 'duration' ? parseInt(value) || 0 : value,
     }));
@@ -90,41 +94,21 @@ export default function MindfulFlowEditor() {
     try {
       const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}.${fileExt}`;
-      const filePath = `flows/${type}/${fileName}`;
+      const filePath = `aulas/${type}/${fileName}`;
 
-      // Try to upload first
-      let uploadResult = await supabase.storage
+      const { data: uploadData, error: uploadError } = await supabase.storage
         .from('content')
-        .upload(filePath, file);
+        .upload(filePath, file, { upsert: true });
 
-      // If bucket doesn't exist, create it and try again
-      if (uploadResult.error && uploadResult.error.message.includes('Bucket not found')) {
-        // Create the bucket
-        const { error: createBucketError } = await supabase.storage.createBucket('content', {
-          public: true,
-          allowedMimeTypes: type === 'pdf' ? ['application/pdf'] : ['image/*'],
-          fileSizeLimit: 10485760, // 10MB
-        });
-
-        if (createBucketError) {
-          throw new Error(`Falha ao criar bucket: ${createBucketError.message}`);
-        }
-
-        // Try upload again
-        uploadResult = await supabase.storage
-          .from('content')
-          .upload(filePath, file);
-
-        if (uploadResult.error) throw uploadResult.error;
-      } else if (uploadResult.error) {
-        throw uploadResult.error;
+      if (uploadError) {
+        throw new Error(`Erro no upload: ${uploadError.message}`);
       }
 
       const { data: { publicUrl } } = supabase.storage
         .from('content')
         .getPublicUrl(filePath);
 
-      setFlowData(prev => ({
+      setAulaData(prev => ({
         ...prev,
         [`${type}_url`]: publicUrl,
       }));
@@ -145,32 +129,34 @@ export default function MindfulFlowEditor() {
     }
   };
 
-  const saveFlow = useMutation({
-    mutationFn: async (data: Partial<MindfulFlow>) => {
+  const saveAula = useMutation({
+    mutationFn: async (data: Partial<Aula>) => {
       const releaseDate = new Date(data.release_timestamp!);
       const payload = {
         title: data.title!,
+        module: data.module || '',
         description: data.description || '',
-        duration: data.duration || 10,
         video_url: data.video_url || '',
+        mindful_video_url: data.mindful_video_url || '',
+        duration: data.duration || 10,
         pdf_url: data.pdf_url || null,
         image_url: data.image_url || null,
         release_timestamp: releaseDate.toISOString(),
         release_time: releaseDate.toTimeString().slice(0, 8),
       };
 
-      if (flowId) {
+      if (aulaId) {
         const { data: updatedData, error } = await supabase
-          .from('mindful_flows')
+          .from('aulas')
           .update(payload)
-          .eq('id', flowId)
+          .eq('id', aulaId)
           .select()
           .single();
         if (error) throw error;
         return updatedData;
       } else {
         const { data: newData, error } = await supabase
-          .from('mindful_flows')
+          .from('aulas')
           .insert([payload])
           .select()
           .single();
@@ -179,14 +165,14 @@ export default function MindfulFlowEditor() {
       }
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['mindful_flows'] });
-      queryClient.invalidateQueries({ queryKey: ['mindful_flow', flowId] });
+      queryClient.invalidateQueries({ queryKey: ['aulas'] });
+      queryClient.invalidateQueries({ queryKey: ['aula', aulaId] });
       toast({
         title: "Sucesso!",
-        description: `Flow ${flowId ? 'atualizado' : 'criado'} com sucesso.`,
+        description: `Aula ${aulaId ? 'atualizada' : 'criada'} com sucesso.`,
       });
-      if (!flowId) {
-        navigate(`/editor/flow/${data.id}`);
+      if (!aulaId) {
+        navigate(`/editor/aulas/${data.id}`);
       }
     },
     onError: (error) => {
@@ -198,22 +184,22 @@ export default function MindfulFlowEditor() {
     },
   });
 
-  const deleteFlow = useMutation({
+  const deleteAula = useMutation({
     mutationFn: async () => {
-      if (!flowId) return;
+      if (!aulaId) return;
       const { error } = await supabase
-        .from('mindful_flows')
+        .from('aulas')
         .delete()
-        .eq('id', flowId);
+        .eq('id', aulaId);
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['mindful_flows'] });
+      queryClient.invalidateQueries({ queryKey: ['aulas'] });
       toast({
         title: "Sucesso!",
-        description: "Flow excluído com sucesso.",
+        description: "Aula excluída com sucesso.",
       });
-      navigate('/mindful');
+      navigate('/aulas');
     },
     onError: (error) => {
       toast({
@@ -225,18 +211,18 @@ export default function MindfulFlowEditor() {
   });
 
   const handleSave = () => {
-    if (!flowData.title || !flowData.description || !flowData.release_timestamp) {
+    if (!aulaData.title || !aulaData.module || !aulaData.release_timestamp) {
       toast({
         title: "Campos obrigatórios",
-        description: "Preencha Título, Descrição e Data de Lançamento.",
+        description: "Preencha Título, Módulo e Data de Lançamento.",
         variant: "destructive",
       });
       return;
     }
-    saveFlow.mutate(flowData);
+    saveAula.mutate(aulaData);
   };
 
-  if (loading || isFlowLoading) {
+  if (loading || isAulaLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="animate-pulse">Carregando editor...</div>
@@ -248,47 +234,51 @@ export default function MindfulFlowEditor() {
     <div className="min-h-screen bg-background p-4 md:p-8 overflow-y-auto pb-24">
       <div className="max-w-4xl mx-auto space-y-6">
         <div className="flex justify-between items-center">
-          <Button variant="ghost" onClick={() => navigate('/mindful')}>
+          <Button variant="ghost" onClick={() => navigate('/aulas')}>
             <ArrowLeft className="h-5 w-5 mr-2" />
             Voltar
           </Button>
           <h1 className="text-2xl font-bold">
-            {flowId ? 'Editar Flow' : 'Criar Novo Flow'}
+            {aulaId ? 'Editar Aula' : 'Criar Nova Aula'}
           </h1>
           <div className="flex gap-2">
-            {flowId && (
-              <Button variant="destructive" onClick={() => deleteFlow.mutate()} disabled={deleteFlow.isPending}>
+            {aulaId && (
+              <Button variant="destructive" onClick={() => deleteAula.mutate()} disabled={deleteAula.isPending}>
                 <Trash2 className="h-5 w-5" />
               </Button>
             )}
-            <Button onClick={handleSave} disabled={saveFlow.isPending}>
+            <Button onClick={handleSave} disabled={saveAula.isPending}>
               <Save className="h-5 w-5 mr-2" />
-              {saveFlow.isPending ? 'Salvando...' : 'Salvar Flow'}
+              {saveAula.isPending ? 'Salvando...' : 'Salvar Aula'}
             </Button>
           </div>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>Detalhes do Flow</CardTitle>
+            <CardTitle>Detalhes da Aula</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="title">Título</Label>
-              <Input id="title" value={flowData.title || ''} onChange={handleChange} required />
+              <Input id="title" value={aulaData.title || ''} onChange={handleChange} required />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="module">Módulo</Label>
+              <Input id="module" value={aulaData.module || ''} onChange={handleChange} required />
             </div>
             <div className="space-y-2">
               <Label htmlFor="description">Descrição</Label>
-              <Textarea id="description" value={flowData.description || ''} onChange={handleChange} required />
+              <Textarea id="description" value={aulaData.description || ''} onChange={handleChange} required />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="duration">Duração (min)</Label>
-                <Input id="duration" type="number" value={flowData.duration || 0} onChange={handleChange} />
+                <Input id="duration" type="number" value={aulaData.duration || 0} onChange={handleChange} />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="release_timestamp">Data/Hora de Lançamento</Label>
-                <Input id="release_timestamp" type="datetime-local" value={flowData.release_timestamp || ''} onChange={handleChange} required />
+                <Input id="release_timestamp" type="datetime-local" value={aulaData.release_timestamp || ''} onChange={handleChange} required />
               </div>
             </div>
           </CardContent>
@@ -303,18 +293,27 @@ export default function MindfulFlowEditor() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="video_url">URL do Vídeo (YouTube, Vimeo, etc.)</Label>
-              <Input 
-                id="video_url" 
+              <Label htmlFor="video_url">URL do Vídeo Principal (YouTube, Vimeo, etc.)</Label>
+              <Input
+                id="video_url"
                 placeholder="Ex: https://www.youtube.com/watch?v=..."
-                value={flowData.video_url || ''} 
-                onChange={handleChange} 
+                value={aulaData.video_url || ''}
+                onChange={handleChange}
               />
             </div>
-            {flowData.video_url && (
+            <div className="space-y-2">
+              <Label htmlFor="mindful_video_url">URL do Vídeo Mindful (opcional)</Label>
+              <Input
+                id="mindful_video_url"
+                placeholder="Ex: https://www.youtube.com/watch?v=..."
+                value={aulaData.mindful_video_url || ''}
+                onChange={handleChange}
+              />
+            </div>
+            {aulaData.video_url && (
               <div className="mt-4 p-4 border rounded-lg bg-muted/50">
                 <h3 className="font-semibold mb-2">Pré-visualização (Embed)</h3>
-                <p className="text-sm text-muted-foreground break-all">{flowData.video_url}</p>
+                <p className="text-sm text-muted-foreground break-all">{aulaData.video_url}</p>
               </div>
             )}
           </CardContent>
@@ -330,11 +329,11 @@ export default function MindfulFlowEditor() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="pdf_url">URL do PDF</Label>
-              <Input 
-                id="pdf_url" 
+              <Input
+                id="pdf_url"
                 placeholder="Ex: https://example.com/document.pdf"
-                value={flowData.pdf_url || ''} 
-                onChange={handleChange} 
+                value={aulaData.pdf_url || ''}
+                onChange={handleChange}
               />
             </div>
             <div className="space-y-2">
@@ -350,10 +349,10 @@ export default function MindfulFlowEditor() {
               />
               {uploadingPdf && <p className="text-sm text-muted-foreground">Enviando PDF...</p>}
             </div>
-            {flowData.pdf_url && (
+            {aulaData.pdf_url && (
               <div className="mt-4 p-4 border rounded-lg bg-muted/50">
                 <h3 className="font-semibold mb-2">Pré-visualização</h3>
-                <a href={flowData.pdf_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+                <a href={aulaData.pdf_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
                   Visualizar PDF
                 </a>
               </div>
@@ -371,11 +370,11 @@ export default function MindfulFlowEditor() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="image_url">URL da Imagem</Label>
-              <Input 
-                id="image_url" 
+              <Input
+                id="image_url"
                 placeholder="Ex: https://example.com/image.jpg"
-                value={flowData.image_url || ''} 
-                onChange={handleChange} 
+                value={aulaData.image_url || ''}
+                onChange={handleChange}
               />
             </div>
             <div className="space-y-2">
@@ -391,10 +390,10 @@ export default function MindfulFlowEditor() {
               />
               {uploadingImage && <p className="text-sm text-muted-foreground">Enviando imagem...</p>}
             </div>
-            {flowData.image_url && (
+            {aulaData.image_url && (
               <div className="mt-4 p-4 border rounded-lg bg-muted/50">
                 <h3 className="font-semibold mb-2">Pré-visualização</h3>
-                <img src={flowData.image_url} alt="Preview" className="max-w-full h-auto rounded" />
+                <img src={aulaData.image_url} alt="Preview" className="max-w-full h-auto rounded" />
               </div>
             )}
           </CardContent>

@@ -120,14 +120,28 @@ export default function DailyContactEditor() {
       const fileUpdatePayload: { pdf_url?: string; image_url?: string } = {};
       if (pdfFile) {
         const filePath = `${lessonRecord.id}/${pdfFile.name}`;
-        const { error } = await supabase.storage.from('lesson_content').upload(filePath, pdfFile, { upsert: true });
-        if (error) throw error;
+        
+        const { error: uploadError } = await supabase.storage
+          .from('lesson_content')
+          .upload(filePath, pdfFile, { upsert: true });
+        
+        if (uploadError) {
+          throw new Error(`Erro no upload do PDF: ${uploadError.message}`);
+        }
+        
         fileUpdatePayload.pdf_url = supabase.storage.from('lesson_content').getPublicUrl(filePath).data.publicUrl;
       }
       if (imageFile) {
         const filePath = `${lessonRecord.id}/${imageFile.name}`;
-        const { error } = await supabase.storage.from('lesson_content').upload(filePath, imageFile, { upsert: true });
-        if (error) throw error;
+        
+        const { error: uploadError } = await supabase.storage
+          .from('lesson_content')
+          .upload(filePath, imageFile, { upsert: true });
+        
+        if (uploadError) {
+          throw new Error(`Erro no upload da imagem: ${uploadError.message}`);
+        }
+        
         fileUpdatePayload.image_url = supabase.storage.from('lesson_content').getPublicUrl(filePath).data.publicUrl;
       }
 

@@ -17,6 +17,8 @@ import DailyContactEditor from "./pages/DailyContactEditor";
 import MindfulFlowEditor from "./pages/MindfulFlowEditor";
 import MusicEditor from "./pages/MusicEditor";
 import Aulas from "./pages/Aulas";
+import AulasDetail from "./pages/AulasDetail";
+import AulasEditor from "./pages/AulasEditor";
 import NotFound from "./pages/NotFound";
 import { FixedNavBar } from "./components/FixedNavBar";
 
@@ -34,6 +36,7 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/aulas" element={<Aulas />} />
+          <Route path="/aulas/:aulaId" element={<AulasDetail />} />
           <Route path="/daily-contact" element={<DailyContact />} />
           <Route path="/daily-contact/:lessonId" element={<DailyContactDetail />} />
           <Route path="/mindful" element={<MindfulFlow />} />
@@ -42,6 +45,8 @@ const App = () => (
           <Route path="/music/:musicId" element={<MusicDetail />} />
           <Route path="/editor/daily-contact" element={<DailyContactEditor />} />
           <Route path="/editor/daily-contact/:lessonId" element={<DailyContactEditor />} />
+          <Route path="/editor/aulas" element={<AulasEditor />} />
+          <Route path="/editor/aulas/:aulaId" element={<AulasEditor />} />
           <Route path="/editor/flow" element={<MindfulFlowEditor />} />
           <Route path="/editor/flow/:flowId" element={<MindfulFlowEditor />} />
           <Route path="/editor/music" element={<MusicEditor />} />

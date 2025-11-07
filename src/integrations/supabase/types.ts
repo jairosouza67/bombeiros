@@ -268,6 +268,81 @@ export type Database = {
         }
         Relationships: []
       }
+      aulas: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          duration: number | null
+          id: string
+          image_url: string | null
+          mindful_video_url: string | null
+          module: string | null
+          pdf_url: string | null
+          release_time: string | null
+          release_timestamp: string | null
+          title: string
+          video_url: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          duration?: number | null
+          id?: string
+          image_url?: string | null
+          mindful_video_url?: string | null
+          module?: string | null
+          pdf_url?: string | null
+          release_time?: string | null
+          release_timestamp?: string | null
+          title: string
+          video_url: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          duration?: number | null
+          id?: string
+          image_url?: string | null
+          mindful_video_url?: string | null
+          module?: string | null
+          pdf_url?: string | null
+          release_time?: string | null
+          release_timestamp?: string | null
+          title?: string
+          video_url?: string
+        }
+        Relationships: []
+      }
+      aulas_progress: {
+        Row: {
+          aula_id: string
+          completed_at: string | null
+          created_at: string | null
+          id: string
+          is_completed: boolean | null
+          mindful_completed: boolean | null
+          user_id: string
+        }
+        Insert: {
+          aula_id: string
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          is_completed?: boolean | null
+          mindful_completed?: boolean | null
+          user_id: string
+        }
+        Update: {
+          aula_id?: string
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          is_completed?: boolean | null
+          mindful_completed?: boolean | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string | null

@@ -21,10 +21,10 @@ export default function Aulas() {
   }, [user, loading, navigate]);
 
   const { data: lessons, isLoading: lessonsLoading } = useQuery({
-    queryKey: ['lessons'],
+    queryKey: ['aulas'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('lessons')
+        .from('aulas')
         .select('*')
         .order('release_timestamp', { ascending: true });
 
@@ -34,10 +34,10 @@ export default function Aulas() {
   });
 
   const { data: progress, isLoading: progressLoading } = useQuery({
-    queryKey: ['progress', user?.id],
+    queryKey: ['aulas_progress', user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('progress')
+        .from('aulas_progress')
         .select('*')
         .eq('user_id', user?.id);
 
@@ -56,7 +56,7 @@ export default function Aulas() {
   }
 
   const getProgress = (lessonId: string) => {
-    return progress?.find(p => p.lesson_id === lessonId);
+    return progress?.find(p => p.aula_id === lessonId);
   };
 
   return (
@@ -113,7 +113,7 @@ export default function Aulas() {
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-3xl font-bold">Catálogo de Aulas</h2>
           {isKeyUser && (
-            <Button onClick={() => navigate('/editor/daily-contact')}>
+            <Button onClick={() => navigate('/editor/aulas')}>
               Adicionar Aula
             </Button>
           )}
@@ -153,13 +153,13 @@ export default function Aulas() {
                       </span>
                     </div>
                     <div className="flex gap-2 mt-4">
-                      <Button size="sm" className="flex-1" onClick={() => navigate(`/daily-contact/${lesson.id}`)}>
+                      <Button size="sm" className="flex-1" onClick={() => navigate(`/aulas/${lesson.id}`)}>
                         Ver Detalhes
                       </Button>
                       {isKeyUser && (
                         <Button size="sm" variant="outline" onClick={(e) => {
                           e.stopPropagation();
-                          navigate(`/editor/daily-contact/${lesson.id}`);
+                          navigate(`/editor/aulas/${lesson.id}`);
                         }}>
                           Editar
                         </Button>
