@@ -6,7 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Flame, User, LogOut, PlusCircle, BookOpen, Wind, Music2 } from 'lucide-react';
+import { Flame, User, LogOut, PlusCircle, BookOpen, Wind, Music2, GraduationCap } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { navItems } from '@/lib/navItems';
 
@@ -64,6 +64,34 @@ export default function Dashboard() {
     }
   });
 
+  // --- Data Fetching for Aulas Progress ---
+  const { data: aulasProgress } = useQuery({
+    queryKey: ['aulas_progress', user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('aulas_progress')
+        .select('*')
+        .eq('user_id', user?.id);
+      
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user
+  });
+
+  const { data: aulas } = useQuery({
+    queryKey: ['aulas'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('aulas')
+        .select('*')
+        .order('release_timestamp', { ascending: true });
+      
+      if (error) throw error;
+      return data;
+    }
+  });
+
   // --- Data Fetching for Music Progress ---
   const { data: musicProgress } = useQuery({
     queryKey: ['music_progress', user?.id],
@@ -102,6 +130,10 @@ export default function Dashboard() {
   const completedLessons = progress?.filter(p => p.is_completed).length || 0;
   const totalLessons = lessons?.length || 0;
   const progressPercentage = totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
+
+  const completedAulas = aulasProgress?.filter(p => p.is_completed).length || 0;
+  const totalAulas = aulas?.length || 0;
+  const aulasProgressPercentage = totalAulas > 0 ? (completedAulas / totalAulas) * 100 : 0;
 
   const completedMusic = musicProgress?.filter(p => p.is_completed).length || 0;
   const totalMusic = mindfulMusic?.length || 0;
@@ -169,8 +201,33 @@ export default function Dashboard() {
           <h2 className="text-3xl font-bold">Bem-vindo, {profile?.name}!</h2>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {/* Card 1: Daily Contact */}
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {/* Card 1: Aulas */}
+          <Card className="hover:shadow-lg transition-shadow">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <GraduationCap className="h-5 w-5 text-primary" />
+                <CardTitle>Aulas</CardTitle>
+              </div>
+              <CardDescription>Aprenda com nossas aulas</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div>
+                  <div className="flex justify-between text-sm mb-2">
+                    <span>Progresso</span>
+                    <span>{completedAulas}/{totalAulas}</span>
+                  </div>
+                  <Progress value={aulasProgressPercentage} className="h-2" />
+                </div>
+                <Button className="w-full" onClick={() => navigate('/aulas')}>
+                  Ir para Aulas
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Card 2: Daily Contact */}
           <Card className="hover:shadow-lg transition-shadow">
             <CardHeader>
               <div className="flex items-center gap-2">
@@ -195,7 +252,7 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          {/* Card 2: Mindful Flow */}
+          {/* Card 3: Mindful Flow */}
           <Card className="hover:shadow-lg transition-shadow">
             <CardHeader>
               <div className="flex items-center gap-2">
@@ -216,7 +273,7 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          {/* Card 3: Músicas */}
+          {/* Card 4: Músicas */}
           <Card className="hover:shadow-lg transition-shadow">
             <CardHeader>
               <div className="flex items-center gap-2">
@@ -232,7 +289,7 @@ export default function Dashboard() {
                     <span>Progresso</span>
                     <span>{completedMusic}/{totalMusic}</span>
                   </div>
-                  <Progress value={musicProgressPercentage} className="h-2 bg-primary/20" indicatorClassName="bg-primary" />
+                  <Progress value={musicProgressPercentage} className="h-2" />
                 </div>
                 <Button variant="outline" className="w-full" onClick={() => navigate('/music')}>
                   Ouvir Músicas
