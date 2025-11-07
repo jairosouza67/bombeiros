@@ -8,7 +8,7 @@ export function FixedNavBar() {
   const orientation = useOrientation();
 
   // Only show the fixed bar on authenticated routes
-  const isAuthRoute = ['/dashboard', '/daily-contact', '/mindful', '/music', '/profile', '/editor'].some(path =>
+  const isAuthRoute = ['/dashboard', '/aulas', '/daily-contact', '/mindful', '/music', '/profile', '/editor'].some(path =>
     location.pathname.startsWith(path)
   );
 

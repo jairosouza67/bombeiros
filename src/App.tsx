@@ -16,6 +16,7 @@ import MusicDetail from "./pages/MusicDetail";
 import DailyContactEditor from "./pages/DailyContactEditor";
 import MindfulFlowEditor from "./pages/MindfulFlowEditor";
 import MusicEditor from "./pages/MusicEditor";
+import Aulas from "./pages/Aulas";
 import NotFound from "./pages/NotFound";
 import { FixedNavBar } from "./components/FixedNavBar";
 
@@ -32,6 +33,7 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/aulas" element={<Aulas />} />
           <Route path="/daily-contact" element={<DailyContact />} />
           <Route path="/daily-contact/:lessonId" element={<DailyContactDetail />} />
           <Route path="/mindful" element={<MindfulFlow />} />
