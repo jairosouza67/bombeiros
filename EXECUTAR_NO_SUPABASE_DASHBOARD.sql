@@ -115,7 +115,7 @@ ON CONFLICT (id) DO UPDATE SET
   file_size_limit = 10485760,
   allowed_mime_types = ARRAY['image/*', 'application/pdf']::text[];
 
--- Drop existing policies if they exist to avoid conflicts
+-- Drop ALL existing policies on storage.objects to avoid conflicts
 DROP POLICY IF EXISTS "Public Access" ON storage.objects;
 DROP POLICY IF EXISTS "Authenticated users can upload" ON storage.objects;
 DROP POLICY IF EXISTS "Users can update their own uploads" ON storage.objects;
@@ -124,58 +124,125 @@ DROP POLICY IF EXISTS "Public Access for lesson content" ON storage.objects;
 DROP POLICY IF EXISTS "Authenticated users can upload lesson content" ON storage.objects;
 DROP POLICY IF EXISTS "Users can update their lesson content uploads" ON storage.objects;
 DROP POLICY IF EXISTS "Users can delete their lesson content uploads" ON storage.objects;
+DROP POLICY IF EXISTS "Public can view content files" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated users can upload to content" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated users can update content" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated users can delete content" ON storage.objects;
+DROP POLICY IF EXISTS "Public can view lesson content files" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated users can upload to lesson_content" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated users can update lesson_content" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated users can delete lesson_content" ON storage.objects;
 
 -- Create unified policies for content bucket
-CREATE POLICY "Public can view content files"
-  ON storage.objects FOR SELECT
-  USING (bucket_id = 'content');
+DO $$ 
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies 
+    WHERE schemaname = 'storage' 
+    AND tablename = 'objects' 
+    AND policyname = 'Public can view content files'
+  ) THEN
+    CREATE POLICY "Public can view content files"
+      ON storage.objects FOR SELECT
+      USING (bucket_id = 'content');
+  END IF;
 
-CREATE POLICY "Authenticated users can upload to content"
-  ON storage.objects FOR INSERT
-  WITH CHECK (
-    bucket_id = 'content' 
-    AND auth.role() = 'authenticated'
-  );
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies 
+    WHERE schemaname = 'storage' 
+    AND tablename = 'objects' 
+    AND policyname = 'Authenticated users can upload to content'
+  ) THEN
+    CREATE POLICY "Authenticated users can upload to content"
+      ON storage.objects FOR INSERT
+      WITH CHECK (
+        bucket_id = 'content' 
+        AND auth.role() = 'authenticated'
+      );
+  END IF;
 
-CREATE POLICY "Authenticated users can update content"
-  ON storage.objects FOR UPDATE
-  USING (
-    bucket_id = 'content' 
-    AND auth.role() = 'authenticated'
-  );
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies 
+    WHERE schemaname = 'storage' 
+    AND tablename = 'objects' 
+    AND policyname = 'Authenticated users can update content'
+  ) THEN
+    CREATE POLICY "Authenticated users can update content"
+      ON storage.objects FOR UPDATE
+      USING (
+        bucket_id = 'content' 
+        AND auth.role() = 'authenticated'
+      );
+  END IF;
 
-CREATE POLICY "Authenticated users can delete content"
-  ON storage.objects FOR DELETE
-  USING (
-    bucket_id = 'content' 
-    AND auth.role() = 'authenticated'
-  );
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies 
+    WHERE schemaname = 'storage' 
+    AND tablename = 'objects' 
+    AND policyname = 'Authenticated users can delete content'
+  ) THEN
+    CREATE POLICY "Authenticated users can delete content"
+      ON storage.objects FOR DELETE
+      USING (
+        bucket_id = 'content' 
+        AND auth.role() = 'authenticated'
+      );
+  END IF;
 
--- Create unified policies for lesson_content bucket
-CREATE POLICY "Public can view lesson content files"
-  ON storage.objects FOR SELECT
-  USING (bucket_id = 'lesson_content');
+  -- Create unified policies for lesson_content bucket
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies 
+    WHERE schemaname = 'storage' 
+    AND tablename = 'objects' 
+    AND policyname = 'Public can view lesson content files'
+  ) THEN
+    CREATE POLICY "Public can view lesson content files"
+      ON storage.objects FOR SELECT
+      USING (bucket_id = 'lesson_content');
+  END IF;
 
-CREATE POLICY "Authenticated users can upload to lesson_content"
-  ON storage.objects FOR INSERT
-  WITH CHECK (
-    bucket_id = 'lesson_content' 
-    AND auth.role() = 'authenticated'
-  );
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies 
+    WHERE schemaname = 'storage' 
+    AND tablename = 'objects' 
+    AND policyname = 'Authenticated users can upload to lesson_content'
+  ) THEN
+    CREATE POLICY "Authenticated users can upload to lesson_content"
+      ON storage.objects FOR INSERT
+      WITH CHECK (
+        bucket_id = 'lesson_content' 
+        AND auth.role() = 'authenticated'
+      );
+  END IF;
 
-CREATE POLICY "Authenticated users can update lesson_content"
-  ON storage.objects FOR UPDATE
-  USING (
-    bucket_id = 'lesson_content' 
-    AND auth.role() = 'authenticated'
-  );
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies 
+    WHERE schemaname = 'storage' 
+    AND tablename = 'objects' 
+    AND policyname = 'Authenticated users can update lesson_content'
+  ) THEN
+    CREATE POLICY "Authenticated users can update lesson_content"
+      ON storage.objects FOR UPDATE
+      USING (
+        bucket_id = 'lesson_content' 
+        AND auth.role() = 'authenticated'
+      );
+  END IF;
 
-CREATE POLICY "Authenticated users can delete lesson_content"
-  ON storage.objects FOR DELETE
-  USING (
-    bucket_id = 'lesson_content' 
-    AND auth.role() = 'authenticated'
-  );
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies 
+    WHERE schemaname = 'storage' 
+    AND tablename = 'objects' 
+    AND policyname = 'Authenticated users can delete lesson_content'
+  ) THEN
+    CREATE POLICY "Authenticated users can delete lesson_content"
+      ON storage.objects FOR DELETE
+      USING (
+        bucket_id = 'lesson_content' 
+        AND auth.role() = 'authenticated'
+      );
+  END IF;
+END $$;
 
 -- ============================================================
 -- VERIFICAÇÃO:
