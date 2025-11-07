@@ -6,7 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Tables } from '@/integrations/supabase/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, CheckCircle, Video, Loader2, Wind } from 'lucide-react';
+import { ArrowLeft, CheckCircle, Video, Loader2, Wind, FileText, Image as ImageIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { PictureInPictureButton } from '@/components/PictureInPictureButton';
@@ -202,6 +202,29 @@ export default function DailyContactDetail() {
                 </div>
               </CardContent>
             </Card>
+
+            {lesson.pdf_url && (
+              <Card>
+                <CardHeader><CardTitle className="flex items-center gap-2"><FileText className="h-5 w-5 text-primary" />Material em PDF</CardTitle></CardHeader>
+                <CardContent>
+                  <Button asChild variant="outline">
+                    <a href={lesson.pdf_url} target="_blank" rel="noopener noreferrer">
+                      <FileText className="h-4 w-4 mr-2" />
+                      Abrir PDF em nova aba
+                    </a>
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+
+            {lesson.image_url && (
+              <Card>
+                <CardHeader><CardTitle className="flex items-center gap-2"><ImageIcon className="h-5 w-5 text-primary" />Imagem de Apoio</CardTitle></CardHeader>
+                <CardContent>
+                  <img src={lesson.image_url} alt="Material de apoio da aula" className="rounded-lg border max-w-full h-auto" />
+                </CardContent>
+              </Card>
+            )}
 
             <Card className={cn("border-accent/50", isMindfulCompleted ? "bg-accent/10" : "bg-card")}>
               <CardHeader>
