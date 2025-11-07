@@ -9,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/components/ui/use-toast';
-import { ArrowLeft, Save, Trash2, Video } from 'lucide-react';
+import { ArrowLeft, Save, Trash2, Video, FileText, Image } from 'lucide-react';
 
 interface MindfulFlow {
   id: string;
@@ -18,6 +18,8 @@ interface MindfulFlow {
   duration: number;
   release_timestamp: string;
   video_url: string;
+  pdf_url?: string;
+  image_url?: string;
 }
 
 export default function MindfulFlowEditor() {
@@ -33,7 +35,12 @@ export default function MindfulFlowEditor() {
     duration: 10,
     release_timestamp: new Date().toISOString().slice(0, 16),
     video_url: '',
+    pdf_url: '',
+    image_url: '',
   });
+
+  const [uploadingPdf, setUploadingPdf] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   useEffect(() => {
     if (!loading && (!user || !isKeyUser)) {
@@ -74,6 +81,47 @@ export default function MindfulFlowEditor() {
     }));
   };
 
+  const handleFileUpload = async (file: File, type: 'pdf' | 'image') => {
+    if (!file) return;
+
+    const setUploading = type === 'pdf' ? setUploadingPdf : setUploadingImage;
+    setUploading(true);
+
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}.${fileExt}`;
+      const filePath = `flows/${type}/${fileName}`;
+
+      const { data, error } = await supabase.storage
+        .from('content')
+        .upload(filePath, file);
+
+      if (error) throw error;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('content')
+        .getPublicUrl(filePath);
+
+      setFlowData(prev => ({
+        ...prev,
+        [`${type}_url`]: publicUrl,
+      }));
+
+      toast({
+        title: "Upload realizado!",
+        description: `${type === 'pdf' ? 'PDF' : 'Imagem'} enviado com sucesso.`,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Erro no upload",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const saveFlow = useMutation({
     mutationFn: async (data: Partial<MindfulFlow>) => {
       const releaseDate = new Date(data.release_timestamp!);
@@ -82,6 +130,8 @@ export default function MindfulFlowEditor() {
         description: data.description || '',
         duration: data.duration || 10,
         video_url: data.video_url || '',
+        pdf_url: data.pdf_url || null,
+        image_url: data.image_url || null,
         release_timestamp: releaseDate.toISOString(),
         release_time: releaseDate.toTimeString().slice(0, 8),
       };
@@ -242,6 +292,86 @@ export default function MindfulFlowEditor() {
               <div className="mt-4 p-4 border rounded-lg bg-muted/50">
                 <h3 className="font-semibold mb-2">Pré-visualização (Embed)</h3>
                 <p className="text-sm text-muted-foreground break-all">{flowData.video_url}</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <FileText className="h-5 w-5" />
+              Conteúdo de PDF
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="pdf_url">URL do PDF</Label>
+              <Input 
+                id="pdf_url" 
+                placeholder="Ex: https://example.com/document.pdf"
+                value={flowData.pdf_url || ''} 
+                onChange={handleChange} 
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Ou faça upload de um arquivo PDF</Label>
+              <Input
+                type="file"
+                accept=".pdf"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleFileUpload(file, 'pdf');
+                }}
+                disabled={uploadingPdf}
+              />
+              {uploadingPdf && <p className="text-sm text-muted-foreground">Enviando PDF...</p>}
+            </div>
+            {flowData.pdf_url && (
+              <div className="mt-4 p-4 border rounded-lg bg-muted/50">
+                <h3 className="font-semibold mb-2">Pré-visualização</h3>
+                <a href={flowData.pdf_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+                  Visualizar PDF
+                </a>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Image className="h-5 w-5" />
+              Conteúdo de Imagem
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="image_url">URL da Imagem</Label>
+              <Input 
+                id="image_url" 
+                placeholder="Ex: https://example.com/image.jpg"
+                value={flowData.image_url || ''} 
+                onChange={handleChange} 
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Ou faça upload de uma imagem</Label>
+              <Input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleFileUpload(file, 'image');
+                }}
+                disabled={uploadingImage}
+              />
+              {uploadingImage && <p className="text-sm text-muted-foreground">Enviando imagem...</p>}
+            </div>
+            {flowData.image_url && (
+              <div className="mt-4 p-4 border rounded-lg bg-muted/50">
+                <h3 className="font-semibold mb-2">Pré-visualização</h3>
+                <img src={flowData.image_url} alt="Preview" className="max-w-full h-auto rounded" />
               </div>
             )}
           </CardContent>

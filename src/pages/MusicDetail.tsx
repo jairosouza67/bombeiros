@@ -6,7 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Tables } from '@/integrations/supabase/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, CheckCircle, Video, Loader2 } from 'lucide-react';
+import { ArrowLeft, CheckCircle, Video, Loader2, FileText, Image } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { PictureInPictureButton } from '@/components/PictureInPictureButton';
@@ -156,6 +156,32 @@ export default function MusicDetail() {
                 )}
               </CardContent>
             </Card>
+
+            {music.pdf_url && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2"><FileText className="h-5 w-5 text-primary" />Conteúdo PDF</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="p-4 bg-muted rounded-lg">
+                    <a href={music.pdf_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline font-semibold">
+                      Visualizar PDF
+                    </a>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {music.image_url && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2"><Image className="h-5 w-5 text-primary" />Conteúdo de Imagem</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <img src={music.image_url} alt={music.title} className="w-full h-auto rounded-lg" />
+                </CardContent>
+              </Card>
+            )}
 
             <Card>
               <CardHeader><CardTitle>Descrição</CardTitle></CardHeader>

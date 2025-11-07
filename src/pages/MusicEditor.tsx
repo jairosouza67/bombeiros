@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, Trash2, Save } from 'lucide-react';
+import { ArrowLeft, Trash2, Save, FileText, Image } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface MindfulMusic {
@@ -19,6 +19,8 @@ interface MindfulMusic {
   video_url: string;
   release_timestamp: string;
   release_time: string | null;
+  pdf_url?: string;
+  image_url?: string;
 }
 
 export default function MusicEditor() {
@@ -35,7 +37,12 @@ export default function MusicEditor() {
     video_url: '',
     release_timestamp: new Date().toISOString().split('T')[0],
     release_time: null,
+    pdf_url: '',
+    image_url: '',
   });
+
+  const [uploadingPdf, setUploadingPdf] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   useEffect(() => {
     if (!authLoading && (!user || !isKeyUser)) {
@@ -70,12 +77,55 @@ export default function MusicEditor() {
         video_url: existingMusic.video_url,
         release_timestamp: existingMusic.release_timestamp?.split('T')[0] || new Date().toISOString().split('T')[0],
         release_time: existingMusic.release_time || null,
+        pdf_url: existingMusic.pdf_url || '',
+        image_url: existingMusic.image_url || '',
       });
     }
   }, [existingMusic]);
 
   const handleChange = (field: keyof MindfulMusic, value: string | number | null) => {
     setMusic(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleFileUpload = async (file: File, type: 'pdf' | 'image') => {
+    if (!file) return;
+
+    const setUploading = type === 'pdf' ? setUploadingPdf : setUploadingImage;
+    setUploading(true);
+
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}.${fileExt}`;
+      const filePath = `music/${type}/${fileName}`;
+
+      const { data, error } = await supabase.storage
+        .from('content')
+        .upload(filePath, file);
+
+      if (error) throw error;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('content')
+        .getPublicUrl(filePath);
+
+      setMusic(prev => ({
+        ...prev,
+        [`${type}_url`]: publicUrl,
+      }));
+
+      toast({
+        title: "Upload realizado!",
+        description: `${type === 'pdf' ? 'PDF' : 'Imagem'} enviado com sucesso.`,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Erro no upload",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setUploading(false);
+    }
   };
 
   // Save mutation
@@ -86,6 +136,8 @@ export default function MusicEditor() {
         description: music.description,
         duration: music.duration,
         video_url: music.video_url,
+        pdf_url: music.pdf_url || null,
+        image_url: music.image_url || null,
         release_timestamp: music.release_timestamp,
         release_time: music.release_time,
       };
@@ -226,6 +278,54 @@ export default function MusicEditor() {
                 onChange={(e) => handleChange('video_url', e.target.value)}
                 placeholder="https://youtube.com/..."
               />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="pdf_url">URL do PDF (opcional)</Label>
+              <Input
+                id="pdf_url"
+                value={music.pdf_url}
+                onChange={(e) => handleChange('pdf_url', e.target.value)}
+                placeholder="https://example.com/document.pdf"
+              />
+              <div className="mt-2">
+                <Label>Ou faça upload de um arquivo PDF</Label>
+                <Input
+                  type="file"
+                  accept=".pdf"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handleFileUpload(file, 'pdf');
+                  }}
+                  disabled={uploadingPdf}
+                  className="mt-1"
+                />
+                {uploadingPdf && <p className="text-sm text-muted-foreground">Enviando PDF...</p>}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="image_url">URL da Imagem (opcional)</Label>
+              <Input
+                id="image_url"
+                value={music.image_url}
+                onChange={(e) => handleChange('image_url', e.target.value)}
+                placeholder="https://example.com/image.jpg"
+              />
+              <div className="mt-2">
+                <Label>Ou faça upload de uma imagem</Label>
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handleFileUpload(file, 'image');
+                  }}
+                  disabled={uploadingImage}
+                  className="mt-1"
+                />
+                {uploadingImage && <p className="text-sm text-muted-foreground">Enviando imagem...</p>}
+              </div>
             </div>
 
             <div className="space-y-2">

@@ -64,10 +64,47 @@ This project is built with:
 
 Simply open [Lovable](https://lovable.dev/projects/31f5259c-e2aa-48f9-9963-4564272ca0c9) and click on Share -> Publish.
 
-## Can I connect a custom domain to my Lovable project?
+## Supabase Setup
 
-Yes, you can!
+This project uses Supabase for backend services including database and file storage.
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+### Database Migrations
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+To apply database migrations:
+
+```sh
+npx supabase db reset
+```
+
+### Storage Setup
+
+For file uploads (PDFs and images), you need to create a storage bucket in Supabase:
+
+1. Go to your Supabase dashboard
+2. Navigate to Storage
+3. Create a new bucket named `content`
+4. Set it to public
+5. Create the following folders inside the bucket:
+   - `flows/pdf/`
+   - `flows/image/`
+   - `music/pdf/`
+   - `music/image/`
+
+### Storage Policies
+
+Add the following policies to the `content` bucket:
+
+- Allow authenticated users to upload files
+- Allow public read access
+
+Example policy for uploads:
+```sql
+CREATE POLICY "Allow authenticated uploads" ON storage.objects
+FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+```
+
+Example policy for public reads:
+```sql
+CREATE POLICY "Allow public reads" ON storage.objects
+FOR SELECT USING (true);
+```

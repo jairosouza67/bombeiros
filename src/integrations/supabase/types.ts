@@ -65,6 +65,8 @@ export type Database = {
           description: string | null
           duration: number | null
           id: string
+          image_url: string | null
+          pdf_url: string | null
           release_time: string | null
           release_timestamp: string | null
           title: string
@@ -75,6 +77,8 @@ export type Database = {
           description?: string | null
           duration?: number | null
           id?: string
+          image_url?: string | null
+          pdf_url?: string | null
           release_time?: string | null
           release_timestamp?: string | null
           title: string
@@ -85,6 +89,8 @@ export type Database = {
           description?: string | null
           duration?: number | null
           id?: string
+          image_url?: string | null
+          pdf_url?: string | null
           release_time?: string | null
           release_timestamp?: string | null
           title?: string
@@ -98,6 +104,8 @@ export type Database = {
           description: string | null
           duration: number | null
           id: string
+          image_url: string | null
+          pdf_url: string | null
           release_time: string | null
           release_timestamp: string | null
           title: string
@@ -108,6 +116,8 @@ export type Database = {
           description?: string | null
           duration?: number | null
           id?: string
+          image_url?: string | null
+          pdf_url?: string | null
           release_time?: string | null
           release_timestamp?: string | null
           title: string
@@ -118,6 +128,8 @@ export type Database = {
           description?: string | null
           duration?: number | null
           id?: string
+          image_url?: string | null
+          pdf_url?: string | null
           release_time?: string | null
           release_timestamp?: string | null
           title?: string
