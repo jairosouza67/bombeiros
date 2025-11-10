@@ -1,0 +1,83 @@
+import { useEffect } from "react";
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useOrientation } from "@/hooks/useOrientation";
+import Index from "./pages/Index";
+import Auth from "./pages/Auth";
+import Dashboard from "./pages/Dashboard";
+import Profile from "./pages/Profile";
+import DailyContact from "./pages/DailyContact";
+import DailyContactDetail from "./pages/DailyContactDetail";
+import MindfulFlow from "./pages/MindfulFlow";
+import MindfulFlowDetail from "./pages/MindfulFlowDetail";
+import Music from "./pages/Music";
+import MusicDetail from "./pages/MusicDetail";
+import DailyContactEditor from "./pages/DailyContactEditor";
+import MindfulFlowEditor from "./pages/MindfulFlowEditor";
+import MusicEditor from "./pages/MusicEditor";
+import Aulas from "./pages/Aulas";
+import AulasDetail from "./pages/AulasDetail";
+import AulasEditor from "./pages/AulasEditor";
+import NotFound from "./pages/NotFound";
+import { FixedNavBar } from "./components/FixedNavBar";
+
+const queryClient = new QueryClient();
+
+const AppContent = () => {
+  const orientation = useOrientation();
+
+  useEffect(() => {
+    // Aplicar classes de orientação globalmente no elemento raiz
+    document.documentElement.classList.toggle("orientation-landscape", orientation === "landscape");
+    document.documentElement.classList.toggle("orientation-portrait", orientation === "portrait");
+    
+    // Atualizar atributo data para CSS avançado
+    document.documentElement.setAttribute("data-orientation", orientation);
+  }, [orientation]);
+
+  return (
+    <>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/auth" element={<Auth />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/aulas" element={<Aulas />} />
+          <Route path="/aulas/:aulaId" element={<AulasDetail />} />
+          <Route path="/daily-contact" element={<DailyContact />} />
+          <Route path="/daily-contact/:lessonId" element={<DailyContactDetail />} />
+          <Route path="/mindful" element={<MindfulFlow />} />
+          <Route path="/mindful/:flowId" element={<MindfulFlowDetail />} />
+          <Route path="/music" element={<Music />} />
+          <Route path="/music/:musicId" element={<MusicDetail />} />
+          <Route path="/editor/daily-contact" element={<DailyContactEditor />} />
+          <Route path="/editor/daily-contact/:lessonId" element={<DailyContactEditor />} />
+          <Route path="/editor/aulas" element={<AulasEditor />} />
+          <Route path="/editor/aulas/:aulaId" element={<AulasEditor />} />
+          <Route path="/editor/flow" element={<MindfulFlowEditor />} />
+          <Route path="/editor/flow/:flowId" element={<MindfulFlowEditor />} />
+          <Route path="/editor/music" element={<MusicEditor />} />
+          <Route path="/editor/music/:musicId" element={<MusicEditor />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+        <FixedNavBar />
+      </BrowserRouter>
+    </>
+  );
+};
+
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
+      <AppContent />
+    </TooltipProvider>
+  </QueryClientProvider>
+);
+
+export default App;

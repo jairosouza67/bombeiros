@@ -1,0 +1,373 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Firefighter-Inspired Design System
+   Deep red primary, gold accents, dark navy backgrounds, white text
+   All colors in HSL format for consistency
+*/
+
+@layer base {
+  :root {
+    /* Background - Deep Navy (Professional & Bold) */
+    --background: 220 15% 12%;
+    --foreground: 0 0% 98%;
+
+    /* Card - Dark Navy with Red Tint */
+    --card: 220 20% 18%;
+    --card-foreground: 0 0% 98%;
+
+    /* Popover - Slightly Lighter Navy */
+    --popover: 220 18% 22%;
+    --popover-foreground: 0 0% 98%;
+
+    /* Primary - Vibrant Fire Red (High Contrast) */
+    --primary: 0 100% 50%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 0 100% 60%;
+
+    /* Secondary - Dark Crimson (Deep & Professional) */
+    --secondary: 0 85% 25%;
+    --secondary-foreground: 0 0% 100%;
+
+    /* Accent - Gold/Amber (Firefighter Badge Color) */
+    --accent: 42 100% 50%;
+    --accent-foreground: 0 0% 10%;
+
+    /* Muted - Subtle Gray for Secondary Text */
+    --muted: 220 10% 40%;
+    --muted-foreground: 0 0% 85%;
+
+    /* Destructive - Alert Red */
+    --destructive: 0 95% 48%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Border - Subtle Red Tint */
+    --border: 0 70% 35%;
+    --input: 220 20% 20%;
+    --ring: 42 100% 50%;
+
+    --radius: 0.75rem;
+
+    /* Gradients - Professional Firefighter Theme */
+    --gradient-primary: linear-gradient(135deg, hsl(0 100% 50%), hsl(15 95% 45%));
+    --gradient-dark: linear-gradient(180deg, hsl(220 15% 12%), hsl(220 20% 8%));
+    --gradient-hero: linear-gradient(135deg, hsl(0 100% 48%) 0%, hsl(10 95% 50%) 50%, hsl(42 100% 50%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(42 100% 45%), hsl(35 100% 55%));
+    
+    /* Shadows - Bold & Professional */
+    --shadow-glow: 0 0 50px hsl(0 100% 50% / 0.3);
+    --shadow-card: 0 8px 32px hsl(0 0% 0% / 0.4);
+    --shadow-intense: 0 12px 48px hsl(0 100% 50% / 0.25);
+    --shadow-subtle: 0 4px 16px hsl(0 0% 0% / 0.2);
+
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .dark {
+    --background: 220 15% 10%;
+    --foreground: 0 0% 99%;
+
+    --card: 220 22% 16%;
+    --card-foreground: 0 0% 99%;
+
+    --popover: 220 20% 20%;
+    --popover-foreground: 0 0% 99%;
+
+    --primary: 0 100% 52%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 0 100% 65%;
+
+    --secondary: 0 85% 28%;
+    --secondary-foreground: 0 0% 100%;
+
+    --accent: 42 100% 52%;
+    --accent-foreground: 0 0% 10%;
+
+    --muted: 220 12% 45%;
+    --muted-foreground: 0 0% 88%;
+
+    --destructive: 0 95% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 75% 38%;
+    --input: 220 22% 18%;
+    --ring: 42 100% 52%;
+
+    --shadow-glow: 0 0 60px hsl(0 100% 52% / 0.4);
+    --shadow-card: 0 8px 40px hsl(0 0% 0% / 0.5);
+    --shadow-intense: 0 12px 56px hsl(0 100% 52% / 0.3);
+    --shadow-subtle: 0 4px 20px hsl(0 0% 0% / 0.3);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* Enhanced Typography */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold tracking-tight;
+  }
+
+  h1 {
+    @apply text-4xl md:text-5xl;
+  }
+
+  h2 {
+    @apply text-3xl md:text-4xl;
+  }
+
+  h3 {
+    @apply text-2xl md:text-3xl;
+  }
+
+  /* Button Enhancements */
+  button {
+    @apply transition-all duration-300;
+  }
+
+  /* Link Enhancements */
+  a {
+    @apply text-primary hover:text-primary-glow transition-colors;
+  }
+}
+
+/* Custom Component Styles */
+@layer components {
+  .btn-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary-glow shadow-md hover:shadow-lg transition-all duration-300;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/90 shadow-md hover:shadow-lg transition-all duration-300;
+  }
+
+  .btn-accent {
+    @apply bg-accent text-accent-foreground hover:bg-accent/90 shadow-md hover:shadow-lg transition-all duration-300;
+  }
+
+  .card-elevated {
+    @apply bg-card rounded-lg shadow-card hover:shadow-intense transition-all duration-300;
+  }
+
+  .badge-fire {
+    @apply bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-semibold;
+  }
+
+  .badge-gold {
+    @apply bg-accent text-accent-foreground px-3 py-1 rounded-full text-sm font-semibold;
+  }
+
+  .gradient-fire {
+    @apply bg-gradient-to-r from-primary via-primary to-primary-glow;
+  }
+
+  .gradient-gold {
+    @apply bg-gradient-to-r from-accent via-accent to-accent/80;
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
+  }
+}
+
+/* Orientation Responsiveness */
+@layer utilities {
+  /* Classes globais aplicadas via data-attribute */
+  html[data-orientation="portrait"] {
+    --orientation: portrait;
+  }
+
+  html[data-orientation="landscape"] {
+    --orientation: landscape;
+  }
+
+  /* Portrait orientation adjustments */
+  @media screen and (orientation: portrait) {
+    .orientation-portrait,
+    html.orientation-portrait body {
+      /* Ajustes específicos para portrait */
+    }
+
+    /* Força layout vertical em portrait */
+    .detail-layout {
+      @apply flex-col;
+    }
+
+    /* Video container mais alto em portrait */
+    .video-container {
+      @apply pt-[75%];
+      max-height: 50vh;
+    }
+
+    /* Cards em coluna única em portrait */
+    .card-grid {
+      @apply grid-cols-1;
+    }
+
+    /* Headers compactos em portrait */
+    .page-header {
+      @apply py-3 px-4;
+    }
+
+    .page-title {
+      @apply text-2xl;
+    }
+
+    /* Navbar vertical otimizada para portrait */
+    .fixed-navbar {
+      @apply h-16;
+    }
+
+    .fixed-navbar .nav-item {
+      @apply flex-col gap-1;
+    }
+
+    .fixed-navbar .nav-item span {
+      @apply text-xs;
+    }
+  }
+
+  /* Landscape orientation adjustments */
+  @media screen and (orientation: landscape) {
+    .orientation-landscape,
+    html.orientation-landscape body {
+      /* Ajustes específicos para landscape */
+    }
+
+    /* Ajustar navbar para landscape - mais compacta */
+    .orientation-landscape .fixed-navbar,
+    html.orientation-landscape .fixed-navbar {
+      @apply h-12;
+      padding: 0.25rem 0.5rem;
+    }
+
+    .orientation-landscape .fixed-navbar .nav-item,
+    html.orientation-landscape .fixed-navbar .nav-item {
+      @apply flex-row justify-center gap-2 py-1;
+    }
+
+    .orientation-landscape .fixed-navbar .nav-item span,
+    html.orientation-landscape .fixed-navbar .nav-item span {
+      @apply text-xs;
+    }
+
+    /* Ajustar layout de detalhes para landscape - lado a lado */
+    .orientation-landscape .detail-layout,
+    html.orientation-landscape .detail-layout {
+      @apply flex-row gap-6;
+    }
+
+    .orientation-landscape .detail-main,
+    html.orientation-landscape .detail-main {
+      @apply flex-[2];
+    }
+
+    .orientation-landscape .detail-sidebar,
+    html.orientation-landscape .detail-sidebar {
+      @apply flex-1 max-w-xs;
+    }
+
+    /* Ajustar vídeos para landscape - aproveitar largura */
+    .orientation-landscape .video-container,
+    html.orientation-landscape .video-container {
+      @apply aspect-video;
+      max-height: 65vh;
+      padding-top: 0 !important;
+    }
+
+    /* Ajustar cards para melhor aproveitamento do espaço */
+    .orientation-landscape .card-grid,
+    html.orientation-landscape .card-grid {
+      @apply grid-cols-2 lg:grid-cols-3;
+    }
+
+    /* Ajustar headers para landscape - mais compactos */
+    .orientation-landscape .page-header,
+    html.orientation-landscape .page-header {
+      @apply py-2 px-6;
+    }
+
+    .orientation-landscape .page-title,
+    html.orientation-landscape .page-title {
+      @apply text-3xl;
+    }
+
+    /* Otimizar espaçamento em landscape mobile */
+    @media screen and (max-height: 500px) {
+      .orientation-landscape .page-header,
+      html.orientation-landscape .page-header {
+        @apply py-1 px-4;
+      }
+
+      .orientation-landscape .page-title,
+      html.orientation-landscape .page-title {
+        @apply text-2xl;
+      }
+
+      .orientation-landscape main,
+      html.orientation-landscape main {
+        @apply py-4;
+      }
+
+      /* Navbar ultra-compacta em landscape baixo */
+      .orientation-landscape .fixed-navbar,
+      html.orientation-landscape .fixed-navbar {
+        @apply h-10;
+        padding: 0.25rem;
+      }
+
+      .orientation-landscape .fixed-navbar .nav-item span,
+      html.orientation-landscape .fixed-navbar .nav-item span {
+        @apply text-[0.65rem];
+      }
+    }
+  }
+
+  /* Responsividade mobile geral */
+  @media screen and (max-width: 640px) {
+    /* Padding bottom para evitar overlap com navbar fixa */
+    body {
+      @apply pb-20;
+    }
+
+    /* Ajustes de espaçamento mobile */
+    .container {
+      @apply px-3;
+    }
+
+    /* Cards mais compactos em mobile */
+    .card-grid {
+      @apply gap-3;
+    }
+  }
+
+  /* Tablets e telas médias */
+  @media screen and (min-width: 768px) and (max-width: 1024px) {
+    .card-grid {
+      @apply grid-cols-2;
+    }
+
+    .detail-layout {
+      @apply flex-row;
+    }
+  }
+
+  /* Desktop */
+  @media screen and (min-width: 1024px) {
+    body {
+      @apply pb-0;
+    }
+
+    .card-grid {
+      @apply grid-cols-3;
+    }
+  }
+}
